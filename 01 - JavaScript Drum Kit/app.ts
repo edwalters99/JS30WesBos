@@ -1,6 +1,6 @@
 const keys = document.querySelectorAll('.key');
 keys.forEach((key) => key.addEventListener('transitionend', removeTransition));
-
+// attempted e: transitionEvent but errored.
 function removeTransition(this: HTMLElement, e: any): void {
   const { propertyName } = e;
   if (propertyName !== 'transform') return;
@@ -19,5 +19,3 @@ function playSound(e: KeyboardEvent): void {
 }
 
 window.addEventListener('keydown', playSound);
-
-// transitonEvent didn't work as type on removeTransition.
