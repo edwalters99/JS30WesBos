@@ -63,6 +63,10 @@
         transition: all 0.05s;
         transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
       }
+
+      .second-hand {
+        background: red;
+      }
     </style>
 
     <script>
@@ -72,7 +76,7 @@
       const minuteHand = document.querySelector('.min-hand');
       const hourHand = document.querySelector('.hour-hand');
 
-      function setDate() {
+      function renderHands() {
         const now = new Date();
         const seconds = now.getSeconds();
         const minutes = now.getMinutes();
@@ -84,28 +88,28 @@
         minuteHand.style.transform = `rotate(${minutesDegrees}deg`;
         hourHand.style.transform = `rotate(${hoursDegrees}deg`;
 
-        // fix glitch when hands move past at top of hour - conditionally removes transition
-        if (secondsDegrees > 444) {
+        // to prevent glitches when hands pass 12 o clock position
+        if (secondsDegrees >= 444) {
           secondHand.style.transition = `none`;
         } else if (secondsDegrees > 90) {
           secondHand.style.transition = `all ${TRANSITION_TIME}`;
           secondHand.style.transitionTimingFunction = TRANSITION_TIMING_VALUE;
         }
-        if (minutesDegrees > 444) {
+        if (minutesDegrees >= 444) {
           minuteHand.style.transition = `none`;
-        } else if (minutesDegrees > 90) {
+        } else {
           minuteHand.style.transition = `all ${TRANSITION_TIME}`;
           minuteHand.style.transitionTimingFunction = TRANSITION_TIMING_VALUE;
         }
-        if (hoursDegrees > 444) {
+        if (hoursDegrees >= 444) {
           hourHand.style.transition = `none`;
-        } else if (hoursDegrees > 90) {
+        } else {
           hourHand.style.transition = `all ${TRANSITION_TIME}`;
           hourHand.style.transitionTimingFunction = TRANSITION_TIMING_VALUE;
         }
       }
 
-      setInterval(setDate, 1000);
+      setInterval(renderHands, 1000);
     </script>
   </body>
 </html>
