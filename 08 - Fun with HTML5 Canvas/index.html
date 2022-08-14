@@ -1,19 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>HTML5 Canvas</title>
-</head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 Canvas</title>
+  </head>
+  <body>
+    <div class="slidecontainer">
+      <div class="sliderinner">
+        <input
+          type="range"
+          min="1"
+          max="100"
+          value="50"
+          class="slider"
+          id="minRangeInput"
+        />
+        Minimum Size
+      </div>
+      <div class="sliderinner">
+        <input
+          type="range"
+          min="100"
+          max="500"
+          value="250"
+          class="slider"
+          id="maxRangeInput"
+        />
+        Maximum Size
+      </div>
+    </div>
+    <canvas id="draw" width="800" height="800"></canvas>
+    <script>
+      const canvas = document.querySelector('#draw');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      ctx.strokeStyle = '#BADA55';
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      let minWidth = 50;
+      let maxWidth = 250;
+      ctx.lineWidth = (maxWidth - minWidth) / 2 + minWidth;
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let direction = true;
 
-</body>
+      function draw(e) {
+        if (!isDrawing) return; // stop the fn from running when they are not moused down
+        // console.log(minWidth, maxWidth, ctx.lineWidth);
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+        hue++;
+        if (hue >= 360) {
+          hue = 0;
+        }
+        if (ctx.lineWidth >= maxWidth || ctx.lineWidth <= minWidth) {
+          direction = !direction;
+        }
+        if (direction) {
+          ctx.lineWidth++;
+        } else {
+          ctx.lineWidth--;
+        }
+      }
+
+      canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', () => (isDrawing = false));
+      canvas.addEventListener('mouseout', () => (isDrawing = false));
+
+      // sliders
+      const sliderMin = document.getElementById('minRangeInput');
+      const sliderMax = document.getElementById('maxRangeInput');
+
+      sliderMin.oninput = function () {
+        minWidth = Number(this.value);
+        ctx.lineWidth = (maxWidth - minWidth) / 2 + minWidth;
+      };
+
+      sliderMax.oninput = function () {
+        maxWidth = Number(this.value);
+        ctx.lineWidth = (maxWidth - minWidth) / 2 + minWidth;
+      };
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      .slidecontainer {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 25px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: 0.2s;
+        transition: opacity 0.2s;
+      }
+
+      .sliderinner {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .slider:hover {
+        opacity: 1;
+      }
+
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: #04aa6d;
+        cursor: pointer;
+      }
+
+      .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: #04aa6d;
+        cursor: pointer;
+      }
+    </style>
+  </body>
 </html>
